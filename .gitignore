@@ -1,3 +1,11 @@
+# Project data (not versioned, exceeds 100 Mo)
+data/
+*.csv
+*.parquet
+
+# macOS
+.DS_Store
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
