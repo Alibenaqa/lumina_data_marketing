@@ -36,15 +36,34 @@ cohérents parmi ceux acquis en 2022-2023, contre 10-15 % parmi ceux acquis en
 2024-2026) et épargne le mix produit (répartition par catégorie quasi
 identique entre les deux groupes).
 
+**Rupture nette en juin 2024, avec une conséquence directe sur la lecture du
+CA mensuel.** Le nombre moyen de lignes par facture, calculé mois par mois
+sur l'ensemble de la base, est stable autour de 2,3 de janvier 2022 à mai
+2024, puis bondit à 6,1 dès juin 2024 — pas un gradient progressif, une
+rupture en un mois. Décomposition de la hausse de CA moyen mensuel entre
+janvier-mai 2024 et juin-décembre 2024 (×7,9 au total) : ×2,7 vient des lignes
+par facture (un pur artefact de complétude d'export) et ×3,1 du nombre de
+factures (potentiellement de la vraie croissance, mais non garanti — même le
+nombre de factures n'est fiable qu'à 75-79 %, voir plus haut). **La pente de
+croissance visible sur `transactions.csv` entre 2022 et mi-2024 ne doit donc
+pas être présentée comme un fait commercial établi : une part mécanique et
+non négligeable en est un artefact de l'export.** Après juin 2024 en
+revanche, la complétude ne dérive plus dans le temps (elle oscille entre 4,1
+et 9,5 avec un pic saisonnier chaque printemps-été, sans tendance de fond),
+ce qui rend le plateau observé depuis fin 2024 nettement plus digne de
+confiance que la pente qui le précède.
+
 **Impact :** `customers.csv` (`total_spent`, `avg_basket`, `n_orders`,
 `recency_days`, `tenure_days`) est la source de vérité pour la valeur client
 et alimente directement le RFM du Jour 2, sans recalcul depuis
 `transactions.csv`. Ce dernier reste fiable pour tout ce qui ne dépend pas du
 nombre de lignes par facture : catégories, prix unitaires, dates, géographie,
-et — validé indépendamment sur le sous-groupe à lignes complètes pour la
-période récente (plateau, pics de juin) — la forme de la saisonnalité. Tout
-montant absolu tiré de `transactions.csv` (CA mensuel, CA par catégorie en €)
-reste une estimation basse.
+et — validé indépendamment sur le sous-groupe à lignes complètes, mais
+uniquement pour la période depuis juin 2024 (plateau, pics de juin) — la
+forme de la saisonnalité récente. Tout montant absolu tiré de
+`transactions.csv` (CA mensuel, CA par catégorie en €) reste une estimation
+basse, et la "croissance 2022-2024" ne doit être présentée au CMO qu'avec
+cette réserve méthodologique explicite.
 
 ## 3. La base est fortement biaisée géographiquement
 
