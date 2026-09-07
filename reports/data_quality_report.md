@@ -16,19 +16,35 @@ pour un total de 11,5 M€ de chiffre d'affaires brut.
 il doit être traité à part dans les analyses globales (chiffre d'affaires,
 saisonnalité) et exclu des analyses par client.
 
-## 2. Les agrégats de `customers.csv` ne correspondent pas au grand livre transactionnel
+## 2. `transactions.csv` est tronqué au niveau des lignes de facture — ce n'est pas `customers.csv` qui est gonflé
 
-`total_spent` est cohérent en interne avec `avg_basket`
-(`avg_basket = total_spent / n_orders` exactement), mais la somme de
-`total_spent` sur toute la base (169,7 M€) est plus de 4 fois supérieure au
-chiffre d'affaires recalculé depuis `transactions.csv` (~40 M€, hors avoirs,
-frais et lignes sans client). Client par client, le ratio médian est
-d'environ 7. `n_orders`, en revanche, reste globalement cohérent avec le
-nombre de factures observées dans `transactions.csv`.
+Première hypothèse testée et invalidée : `total_spent` n'est pas surestimé,
+c'est le nombre de lignes de facture conservées par client dans
+`transactions.csv` qui est incomplet. Preuve : en séparant les 4 736 clients
+(9,6 % de la base) dont `total_spent` correspond exactement (± 3 %) au
+chiffre d'affaires recalculé depuis le ledger, des 44 576 clients (90,4 %)
+pour qui il ne correspond pas, le nombre de lignes par facture diffère
+radicalement — 21,6 lignes/facture en moyenne (médiane 17,0) pour le premier
+groupe, contre 2,6 (médiane 2,3) pour le second, un rapport (~8x) quasiment
+identique au ratio médian d'écart de valeur observé (7,1x). Prix unitaires et
+quantités sont statistiquement identiques entre les deux groupes (~20,1 € et
+~1,55 en moyenne dans les deux cas) : ce sont les mêmes lignes, mais moins
+nombreuses. Les factures existent bien (`n_orders` correspond exactement au
+nombre de factures du ledger pour 74,9 % des clients, ± 10 % pour 79,4 %) ; la
+troncature touche surtout les factures anciennes (moins de 1 % de clients
+cohérents parmi ceux acquis en 2022-2023, contre 10-15 % parmi ceux acquis en
+2024-2026) et épargne le mix produit (répartition par catégorie quasi
+identique entre les deux groupes).
 
-**Impact :** on ne peut pas faire confiance à `total_spent` ni à
-`avg_basket` de `customers.csv` pour la composante Monétaire d'un RFM — ces
-métriques doivent être recalculées depuis `transactions.csv`.
+**Impact :** `customers.csv` (`total_spent`, `avg_basket`, `n_orders`,
+`recency_days`, `tenure_days`) est la source de vérité pour la valeur client
+et alimente directement le RFM du Jour 2, sans recalcul depuis
+`transactions.csv`. Ce dernier reste fiable pour tout ce qui ne dépend pas du
+nombre de lignes par facture : catégories, prix unitaires, dates, géographie,
+et — validé indépendamment sur le sous-groupe à lignes complètes pour la
+période récente (plateau, pics de juin) — la forme de la saisonnalité. Tout
+montant absolu tiré de `transactions.csv` (CA mensuel, CA par catégorie en €)
+reste une estimation basse.
 
 ## 3. La base est fortement biaisée géographiquement
 
